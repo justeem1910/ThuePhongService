@@ -1,8 +1,8 @@
-package config;
+package org.example.config;
 
-import dto.AuthorityDto;
-import dto.ErrorDto;
-import dto.UserDto;
+import org.example.dto.AuthorityDto;
+import org.example.dto.ErrorDto;
+import org.example.dto.UserDto;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
