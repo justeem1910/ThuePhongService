@@ -1,0 +1,35 @@
+server:
+  port: 8084
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    # SỬA LẠI THEO MÁY BẠN (Port 12345, DB QLKytucxa)
+    url: jdbc:postgresql://localhost:12345/QLKytucxa
+    # SỬA USER CỦA BẠN
+    username: postgres
+    # SỬA PASS CỦA BẠN
+    password: hlong1910
+  application:
+    name: student-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+
+jwt:
+  # Giữ nguyên secret của họ nếu bạn dùng chung cơ chế tạo token
+  secret: '[a-zA-Z0-9._]^+$Guidelines89797987forAlphabeticalArraNumeralsandOtherSymbo$'
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
