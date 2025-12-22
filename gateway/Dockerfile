@@ -1,4 +1,8 @@
-FROM openjdk:11
-EXPOSE 8889
-COPY ./target/gateway-1.0-SNAPSHOT.jar api-gateway.jar
-ENTRYPOINT ["java","-jar","/api-gateway.jar"]
+# Sử dụng Amazon Corretto (Bản Alpine siêu nhẹ, hỗ trợ tốt Mac M1/M2/M3)
+FROM amazoncorretto:17-alpine-jdk
+
+# Copy file jar (giữ nguyên logic cũ)
+COPY target/*.jar app.jar
+
+# Chạy ứng dụng
+ENTRYPOINT ["java","-jar","/app.jar"]

@@ -6,50 +6,54 @@ server:
 spring:
   application:
     name: gateway-service
-  cloud:
-    gateway:
-      routes:
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/v1/inventories/**
-
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/v1/orders/**
-          filters:
-            - AuthFilter
-
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/user/**
-
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
-            - Method=POST,PUT,DELETE
-          filters:
-            - AuthFilter
-
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
-            - Method=GET
-
-        - id: file-service
-          uri: lb://file-service
-          predicates:
-            - Path=/file/**
-      discovery:
-        locator:
-          enabled: true
   main:
     web-application-type: reactive
 
+  cloud:
+    gateway:
+      # Cấu hình CORS
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+        # --- 1. STUDENT SERVICE ---
+        - id: student-service
+          uri: lb://student-service
+          predicates:
+            - Path=/api/sinhvien/**
+          # filters:
+          #   - AuthFilter
+
+        # --- 2. ROOM SERVICE (ĐÃ SỬA LỖI Ở ĐÂY) ---
+        - id: room-service
+          uri: lb://room-service
+          predicates:
+            - Path=/api/phong/** # Kết thúc dòng tại đây
+#          filters:                 # filters phải nằm dòng mới, ngang hàng với predicates
+#            - AuthFilter
+
+        # --- 3. CONTRACT SERVICE ---
+        # Lưu ý: uri lb://... phải trùng với spring.application.name trong file yml của service đó
+        - id: rentroom-service
+          uri: lb://rentroom-service
+          predicates:
+            - Path=/api/hopdong/**
+#          filters:
+#            - AuthFilter
 eureka:
   client:
     register-with-eureka: true

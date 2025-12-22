@@ -1,15 +1,21 @@
 package org.example.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
 public class ErrorDto {
     private String error_message;
-}
 
+    public ErrorDto() {
+    }
+
+    public ErrorDto(String error_message) {
+        this.error_message = error_message;
+    }
+
+    // Hàm này đặt tên đặc biệt để khớp với code AuthFilter của bạn
+    public String getError_message() {
+        return error_message;
+    }
+
+    public void setError_message(String error_message) {
+        this.error_message = error_message;
+    }
+}

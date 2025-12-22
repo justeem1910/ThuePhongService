@@ -1,18 +1,18 @@
 server:
-  port: 8084
+  port: 8086
 spring:
   main:
     allow-circular-references: true
   datasource:
     driver-class-name: org.postgresql.Driver
     # SỬA LẠI THEO MÁY BẠN (Port 12345, DB QLKytucxa)
-    url: jdbc:postgresql://localhost:12345/StudentDB
+    url: jdbc:postgresql://localhost:12345/RentRoomDB
     # SỬA USER CỦA BẠN
     username: postgres
     # SỬA PASS CỦA BẠN
     password: hlong1910
   application:
-    name: student-service
+    name: rentRoom-service
   jpa:
     hibernate:
       ddl-auto: update

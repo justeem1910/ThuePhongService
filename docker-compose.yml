@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # ------------------------------------------------------------
+  # 1. HẠ TẦNG (INFRASTRUCTURE)
+  # ------------------------------------------------------------
+
+  postgres:
+    container_name: postgres-thuephong
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hlong1910
+    ports:
+      - "5432:5432" # Port ngoài:Port trong
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Script này sẽ chạy lần đầu để tạo 4 database
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - thuephong-net
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin-thuephong
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - thuephong-net
+
+  # ------------------------------------------------------------
+  # 2. DISCOVERY & GATEWAY
+  # ------------------------------------------------------------
+
+  eureka-server:
+    container_name: eureka-server
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - thuephong-net
+    environment:
+      - EUREKA_CLIENT_REGISTERWITHEUREKA=false
+      - EUREKA_CLIENT_FETCHREGISTRY=false
+
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - "8889:8889"
+    depends_on:
+      - eureka-server
+    networks:
+      - thuephong-net
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=*
+
+  # ------------------------------------------------------------
+  # 3. MICROSERVICES
+  # ------------------------------------------------------------
+
+  student-service:
+    container_name: student-service
+    build: ./student-service
+    depends_on:
+      - postgres
+      - eureka-server
+    networks:
+      - thuephong-net
+    environment:
+      # Override cấu hình localhost trong application.yml
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/StudentDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=hlong1910
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  room-service:
+    container_name: room-service
+    build: ./room-service
+    depends_on:
+      - postgres
+      - eureka-server
+    networks:
+      - thuephong-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/RoomDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=hlong1910
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  rentroom-service:
+    container_name: rentroom-service
+    build: ./rentRoom-service # Hoặc folder chứa service hợp đồng của bạn
+    depends_on:
+      - postgres
+      - eureka-server
+    networks:
+      - thuephong-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/RentRoomDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=hlong1910
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  # user-service: (Bỏ comment nếu bạn đã code xong module này)
+  #   container_name: user-service
+  #   build: ./user-service
+  #   depends_on:
+  #     - postgres
+  #     - eureka-server
+  #   networks:
+  #     - thuephong-net
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/UserDB
+  #     - SPRING_DATASOURCE_USERNAME=postgres
+  #     - SPRING_DATASOURCE_PASSWORD=hlong1910
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+volumes:
+  postgres_data:
+
+networks:
+  thuephong-net:
+    driver: bridge
