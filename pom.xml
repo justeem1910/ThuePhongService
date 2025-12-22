@@ -15,6 +15,7 @@
         <module>student-service</module>
         <module>room-service</module>
         <module>rentRoom-service</module>
+        <module>ThuePhongFE</module>
     </modules>
 
     <properties>

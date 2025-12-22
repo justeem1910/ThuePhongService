@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Hợp Đồng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5" style="max-width: 600px;">
+<h2 class="text-center mb-4">Tạo Hợp Đồng Mới</h2>
+
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+<form th:action="@{/save}" th:object="${hopDong}" method="post" class="card p-4 shadow">
+
+    <div class="mb-3">
+        <label class="form-label">Mã Sinh Viên (ID):</label>
+        <input type="number" th:field="*{sinhVien}" class="form-control" placeholder="Ví dụ: 1" required>
+        <small class="text-muted">Nhập ID của sinh viên đã có trong hệ thống</small>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Mã Phòng (ID):</label>
+        <input type="number" th:field="*{phong}" class="form-control" placeholder="Ví dụ: 101" required>
+        <small class="text-muted">Nhập ID của phòng đã có</small>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Ngày Bắt Đầu:</label>
+            <input type="date" th:field="*{ngayBatDau}" class="form-control" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Ngày Kết Thúc:</label>
+            <input type="date" th:field="*{ngayKetThuc}" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Trạng Thái:</label>
+        <select th:field="*{trangThai}" class="form-select">
+            <option value="ACTIVE">Đang thuê (ACTIVE)</option>
+            <option value="PENDING">Chờ duyệt (PENDING)</option>
+        </select>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a href="/" class="btn btn-secondary">Quay lại</a>
+        <button type="submit" class="btn btn-primary">Lưu Hợp Đồng</button>
+    </div>
+</form>
+</body>
+</html>
